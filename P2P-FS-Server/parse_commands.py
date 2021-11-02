@@ -24,6 +24,8 @@ def get_data(msg, addr, clients):
 
     parsed_msg = msg.split(' ')
 
+    # TODO: Validation of the registered user needs to be done in here
+
     # Check to make sure a command was given
     if parsed_msg[0] in commands:
         # If new user is being registered, we need to save the client address and port numbers
@@ -36,7 +38,7 @@ def get_data(msg, addr, clients):
         elif parsed_msg[0] == REMOVE:
             return_msg = remove(parsed_msg)
         elif parsed_msg[0] == RETRIEVEALL:
-            return_msg = retrieve_all(parsed_msg)
+            return_msg = retrieve_all(parsed_msg, clients)
         elif parsed_msg[0] == RETRIEVEINFOT:
             return_msg = retrieve_infot(parsed_msg)
         elif parsed_msg[0] == SEARCHFILE:
@@ -44,7 +46,7 @@ def get_data(msg, addr, clients):
         elif parsed_msg[0] == DOWNLOAD:
             return_msg = download(parsed_msg)
         elif parsed_msg[0] == UPDATECONTACT:
-            return_msg = update_contact(parsed_msg)
+            return_msg = update_contact(parsed_msg, clients)
         else:
             return_msg = 'Invalid Command'
     else:
