@@ -19,7 +19,7 @@ DOWNLOAD = 'DOWNLOAD'
 UPDATECONTACT = 'UPDATE-CONTACT'
 
 
-def get_data(msg, addr, clients):
+def get_data(msg, clients):
     commands = [REGISTER, DEREGISTER, PUBLISH, REMOVE, RETRIEVEALL, RETRIEVEINFOT, SEARCHFILE, DOWNLOAD, UPDATECONTACT]
 
     parsed_msg = msg.split(' ')
