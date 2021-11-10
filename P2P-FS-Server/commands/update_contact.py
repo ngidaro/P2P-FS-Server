@@ -12,11 +12,11 @@ def update_contact(parsed_msg, clients):
         for client in clients:
             if name == client.name:
                 client.update_client(IP_address, port_UDP, port_TCP)
-                return 'UPDATE-CONFIRMED | ' + rq + ' | ' + name + ' | ' + IP_address + ' | ' + port_UDP + ' | ' + port_TCP
+                return 'UPDATE-CONFIRMED ' + rq + ' ' + name + ' ' + IP_address + ' ' + port_UDP + ' ' + port_TCP
 
-        return 'UPDATE-DENIED | ' + parsed_msg[1] + ' | ' + parsed_msg[2] + ' | ' + 'Name does not exist'
+        return 'UPDATE-DENIED ' + parsed_msg[1] + ' ' + parsed_msg[2] + ' ' + 'Name does not exist'
     else:
         if len(parsed_msg) > 2:
-            return 'UPDATE-DENIED | ' + parsed_msg[1] + ' | ' + parsed_msg[2] + ' | ' + 'Invalid Parameters'
+            return 'UPDATE-DENIED ' + parsed_msg[1] + ' ' + parsed_msg[2] + ' ' + 'Invalid Parameters'
         else:
-            return 'UPDATE-DENIED | Invalid Command'
+            return 'UPDATE-DENIED Invalid Command'

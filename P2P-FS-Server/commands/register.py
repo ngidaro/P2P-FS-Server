@@ -12,11 +12,11 @@ def register(parsed_msg, clients):
         # Check if the name doesn't exist already in the list of clients
         for client in clients:
             if name == client.name:
-                return 'REGISTER-DENIED | ' + rq + ' | Username has already been taken'
+                return 'REGISTER-DENIED ' + rq + ' Username has already been taken'
 
         # Add new client to array
         clients.append(Client(name, IP_address, port_UDP, port_TCP))
 
-        return 'REGISTERED | ' + rq
+        return 'REGISTERED ' + rq
     else:
-        return 'REGISTER-DENIED | ' + parsed_msg[1] + ' | Invalid Command'
+        return 'REGISTER-DENIED ' + parsed_msg[1] + ' Invalid Command'

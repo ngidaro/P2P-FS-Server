@@ -10,7 +10,7 @@ def de_register(parsed_msg, clients):
             if name == client.name:
                 # Remove this client from the list
                 clients.pop(index)
-                return 'DE-REGISTERED | ' + rq + ' | ' + name
+                return 'DE-REGISTERED ' + rq + ' ' + name
 
         return ''
     else:
