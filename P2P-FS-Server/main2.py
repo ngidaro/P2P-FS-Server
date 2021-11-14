@@ -1,4 +1,4 @@
-from connections import startUDP, startTCP
+from connections import startUDP
 
 # Second Server
 if __name__ == '__main__':
