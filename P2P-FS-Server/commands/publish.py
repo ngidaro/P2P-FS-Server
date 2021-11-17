@@ -7,21 +7,28 @@ def publish(parsed_msg):
 
     sock.bind(server_address)
 
-    sock.listen(1)
-    connection, client_address = sock.accept()
 
     publishedfiles=parsed_msg[3:]
+    sock.listen(1)
+    connection, client_address = sock.accept()
+    unpickdata = connection.recv(1024)
+    data=pickle.loads(unpickdata)
     for file in publishedfiles:
         f = open(file, "a")
-        while True:
-            data = connection.recv(1024)
-            try:
-                for element in pickle.loads(data):
-                    f.write(element)
-            except EOFError:
-                f.close()
-                break
+        count=0
+        for element in data:
+            if element=="01111110":
+                if count==0:
+                    pass
+                    count+=1
+                else:
+                    count+=1
+                    break
+            else:
+                f.write(element)
+                count+=1
         f.close()
+        data=data[count:]
     connection.close()
     return 'PUBLISHED ' + parsed_msg[1]
 

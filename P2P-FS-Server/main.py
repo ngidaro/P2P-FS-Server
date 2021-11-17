@@ -10,5 +10,4 @@ if __name__ == '__main__':
     remote_PORT = 3000
 
     startUDP(HOST, PORT, remote_HOST, remote_PORT)
-    # NOTE: startTCP() will never execute because main is a synchronous function
-    # startTCP()
+
