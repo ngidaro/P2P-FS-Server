@@ -59,5 +59,3 @@ def startUDP(HOST, PORT, remote_HOST, remote_PORT):
                 s.sendto(clients_data, (remote_HOST, remote_PORT))
 
     s.close()
-
-

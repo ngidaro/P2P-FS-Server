@@ -10,4 +10,3 @@ if __name__ == '__main__':
     remote_PORT = 8888
 
     startUDP(HOST, PORT, remote_HOST, remote_PORT)
-    # startTCP()

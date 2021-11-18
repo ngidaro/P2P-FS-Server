@@ -5,6 +5,9 @@ class Client:
     port_UDP = 0
     port_TCP = 0
 
+    # Files uploaded by the Client
+    files = []
+
     def __init__(self, name, address, port_UDP, port_TCP):
         self.name = name
         self.address = address
@@ -17,4 +20,21 @@ class Client:
         self.port_TCP = port_TCP
 
     def display_data(self):
-        return self.name + ' | ' + self.address + ' | ' + str(self.port_TCP)
+        fileString = ''
+        for file in self.files:
+            fileString = fileString + ' ' + file
+
+        return self.name + ' ' + self.address + ' ' + str(self.port_TCP) + ' ' + fileString
+
+    def addFile(self, filename):
+        self.files.append(filename)
+
+    def removeFile(self, file):
+        for index, filename in enumerate(self.files):
+            if filename == file:
+                # Remove this file from the list
+                self.files.pop(index)
+                return 1
+
+        # File does not exist for this user
+        return 0

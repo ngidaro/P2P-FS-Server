@@ -34,9 +34,9 @@ def get_data(msg, clients):
         elif parsed_msg[0] == DEREGISTER:
             return_msg = de_register(parsed_msg, clients)
         elif parsed_msg[0] == PUBLISH:
-            return_msg = publish(parsed_msg)
+            return_msg = publish(parsed_msg, clients)
         elif parsed_msg[0] == REMOVE:
-            return_msg = remove(parsed_msg)
+            return_msg = remove(parsed_msg, clients)
         elif parsed_msg[0] == RETRIEVEALL:
             return_msg = retrieve_all(parsed_msg, clients)
         elif parsed_msg[0] == RETRIEVEINFOT:
