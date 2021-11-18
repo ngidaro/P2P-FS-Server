@@ -13,7 +13,7 @@ def remove(parsed_msg, clients):
 
         # Removes the files from 'public' directory
         for file in filesToRemove:
-            fileToRemove = Path("public/" + file)
+            fileToRemove = Path("public/" + parsed_msg[2] + '/' + file)
             # Check to see if the file exists in the public directory
             if fileToRemove.is_file():
                 # Removes the file from the clients array of files

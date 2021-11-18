@@ -19,12 +19,24 @@ class Client:
         self.port_UDP = port_UDP
         self.port_TCP = port_TCP
 
+    # Displays all data for this client
     def display_data(self):
         fileString = ''
         for file in self.files:
             fileString = fileString + ' ' + file
 
         return self.name + ' ' + self.address + ' ' + str(self.port_TCP) + ' ' + fileString
+
+    # Displays only info for this client not their files (used for SEARCH-FILE)
+    def displayInfo(self):
+        return self.name + ' ' + self.address + ' ' + str(self.port_TCP)
+
+    # Searches for specific file in files array
+    def searchFile(self, filename):
+        for file in self.files:
+            if file == filename:
+                return 1
+        return 0
 
     def addFile(self, filename):
         self.files.append(filename)

@@ -1,5 +1,6 @@
 import socket
 import pickle
+from pathlib import Path
 
 
 def getClientIndex(username, clients):
@@ -30,8 +31,15 @@ def publish(parsed_msg, clients):
         connection, client_address = sock.accept()
         unpickdata = connection.recv(1024)
         data = pickle.loads(unpickdata)
+
         for file in publishedfiles:
-            f = open('public/' + file, "a")
+
+            # Check if client's folder exists, if it doesn't then make one
+            clientFolder = Path("public/" + parsed_msg[2])
+            if not clientFolder.exists():
+                clientFolder.mkdir(parents=True)
+
+            f = open('public/' + parsed_msg[2] + '/' + file, "a")
 
             # Add filename to clients array of uploaded files
             clients[clientIndex].addFile(file)

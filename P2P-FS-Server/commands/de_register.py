@@ -1,4 +1,4 @@
-from pathlib import Path
+import shutil
 
 
 def de_register(parsed_msg, clients):
@@ -8,14 +8,8 @@ def de_register(parsed_msg, clients):
 
         for index, client in enumerate(clients):
             if name == client.name:
-                # Remove the files from the public directory related to this client
-                for file in client.files:
-                    fileToRemove = Path("public/" + file)
-                    # Check to see if the file exists in the public directory
-                    if fileToRemove.is_file():
-                        # Remove the file from /public
-                        fileToRemove.unlink()
-
+                # Remove client directory and all contents
+                shutil.rmtree('public/' + name)
                 # Remove this client from the list
                 clients.pop(index)
                 return 'DE-REGISTERED ' + rq + ' ' + name

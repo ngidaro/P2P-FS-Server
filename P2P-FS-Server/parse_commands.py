@@ -42,7 +42,7 @@ def get_data(msg, clients):
         elif parsed_msg[0] == RETRIEVEINFOT:
             return_msg = retrieve_infot(parsed_msg, clients)
         elif parsed_msg[0] == SEARCHFILE:
-            return_msg = search_file(parsed_msg)
+            return_msg = search_file(parsed_msg, clients)
         elif parsed_msg[0] == DOWNLOAD:
             return_msg = download(parsed_msg)
         elif parsed_msg[0] == UPDATECONTACT:
