@@ -8,6 +8,8 @@ def remove(parsed_msg, clients):
 
         # Gets the index of the client in the array of clients
         clientIndex = getClientIndex(parsed_msg[2], clients)
+        if clientIndex == -1:
+            return 'REMOVE-DENIED ' + parsed_msg[1] + ' User does not exist'
 
         # Removes the files from 'public' directory
         for file in filesToRemove:

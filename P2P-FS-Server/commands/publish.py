@@ -6,6 +6,8 @@ def getClientIndex(username, clients):
     for index, client in enumerate(clients):
         if client.name == username:
             return index
+    # if the client does not exist
+    return -1
 
 
 def publish(parsed_msg, clients):
@@ -22,6 +24,8 @@ def publish(parsed_msg, clients):
 
         # Get the clients index so that we can eventually add the files to their array of files
         clientIndex = getClientIndex(parsed_msg[2], clients)
+        if clientIndex == -1:
+            return 'PUBLISHED-DENIED ' + parsed_msg[1] + ' User does not exist'
 
         connection, client_address = sock.accept()
         unpickdata = connection.recv(1024)
