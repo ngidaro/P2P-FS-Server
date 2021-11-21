@@ -11,15 +11,11 @@ def getClientIndex(username, clients):
     return -1
 
 
-def publish(parsed_msg, clients):
+def publish(parsed_msg, clients, sock):
     if len(parsed_msg) > 3:
         # -----------Open TCP socket for passing text files-----------
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = ('', 10000)
 
-        sock.bind(server_address)
 
-        sock.listen(1)
         # ----------------------------------------------------------
         publishedfiles = parsed_msg[3:]
 
@@ -59,7 +55,6 @@ def publish(parsed_msg, clients):
             f.close()
             data = data[count:]
 
-        connection.close()
         return 'PUBLISHED ' + parsed_msg[1]
     else:
         return 'PUBLISHED-DENIED ' + parsed_msg[1] + ' Missing parameters'

@@ -10,6 +10,7 @@ def startUDP(HOST, PORT, remote_HOST, remote_PORT):
     # UDP Server - Create UDP Datagram socket
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('Socket Created')
     except socket.error:
         print('Failed to create socket.')
@@ -18,6 +19,10 @@ def startUDP(HOST, PORT, remote_HOST, remote_PORT):
     # Bind socket
     try:
         s.bind((HOST, PORT))
+        sock.bind(('', 10000))
+        sock.listen(1)
+
+
     except socket.error:
         print('Bind Failed')
         sys.exit()
@@ -49,7 +54,7 @@ def startUDP(HOST, PORT, remote_HOST, remote_PORT):
                 s.sendto(clients_data, (remote_HOST, remote_PORT))
             else:
                 # Parse the data
-                msg_to_client = pc.get_data(data, clients)
+                msg_to_client = pc.get_data(data, clients, sock)
 
                 s.sendto(str.encode(msg_to_client), addr)
                 print('Message[' + addr[0] + ':' + str(addr[1]) + '] ' + data.strip())
@@ -57,5 +62,5 @@ def startUDP(HOST, PORT, remote_HOST, remote_PORT):
                 # Save a copy of clients to the backup server
                 clients_data = pickle.dumps(clients)
                 s.sendto(clients_data, (remote_HOST, remote_PORT))
-
+    sock.close()
     s.close()
