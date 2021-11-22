@@ -11,7 +11,7 @@ def getClientIndex(username, clients):
     return -1
 
 
-def publish(parsed_msg, clients, sock):
+def publish(parsed_msg, clients, connection):
     if len(parsed_msg) > 3:
         # -----------Open TCP socket for passing text files-----------
 
@@ -24,7 +24,7 @@ def publish(parsed_msg, clients, sock):
         if clientIndex == -1:
             return 'PUBLISHED-DENIED ' + parsed_msg[1] + ' User does not exist'
 
-        connection, client_address = sock.accept()
+        #connection, client_address = sock.accept()
         unpickdata = connection.recv(1024)
         data = pickle.loads(unpickdata)
 
@@ -54,21 +54,8 @@ def publish(parsed_msg, clients, sock):
                     count += 1
             f.close()
             data = data[count:]
-
         return 'PUBLISHED ' + parsed_msg[1]
     else:
+
         return 'PUBLISHED-DENIED ' + parsed_msg[1] + ' Missing parameters'
 
-
-# def startTCP(filename):
-#     while True:
-#         try:
-#             print(sys.stderr, 'connection from', client_address)
-#             while True:
-#                 data = connection.recv(1024)
-#                 f.write(pickle.loads(data))
-#                 if not data:
-#                     break
-#         finally:
-#             connection.close()
-#         f.close()

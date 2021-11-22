@@ -21,6 +21,8 @@ def startUDP(HOST, PORT, remote_HOST, remote_PORT):
         s.bind((HOST, PORT))
         sock.bind(('', 10000))
         sock.listen(1)
+        connection, client_address = sock.accept()
+
 
 
     except socket.error:
@@ -54,7 +56,7 @@ def startUDP(HOST, PORT, remote_HOST, remote_PORT):
                 s.sendto(clients_data, (remote_HOST, remote_PORT))
             else:
                 # Parse the data
-                msg_to_client = pc.get_data(data, clients, sock)
+                msg_to_client = pc.get_data(data, clients, connection)
 
                 s.sendto(str.encode(msg_to_client), addr)
                 print('Message[' + addr[0] + ':' + str(addr[1]) + '] ' + data.strip())
@@ -62,5 +64,6 @@ def startUDP(HOST, PORT, remote_HOST, remote_PORT):
                 # Save a copy of clients to the backup server
                 clients_data = pickle.dumps(clients)
                 s.sendto(clients_data, (remote_HOST, remote_PORT))
+    connection.close()
     sock.close()
     s.close()
