@@ -1,4 +1,5 @@
 import shutil
+from pathlib import Path
 
 
 def de_register(parsed_msg, clients):
@@ -9,7 +10,9 @@ def de_register(parsed_msg, clients):
         for index, client in enumerate(clients):
             if name == client.name:
                 # Remove client directory and all contents
-                shutil.rmtree('public/' + name)
+                # Check if folder exists
+                if Path('public/' + name).exists():
+                    shutil.rmtree('public/' + name)
                 # Remove this client from the list
                 clients.pop(index)
                 return 'DE-REGISTERED ' + rq + ' ' + name
