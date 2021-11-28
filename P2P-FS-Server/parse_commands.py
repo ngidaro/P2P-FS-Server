@@ -19,7 +19,7 @@ DOWNLOAD = 'DOWNLOAD'
 UPDATECONTACT = 'UPDATE-CONTACT'
 
 
-def get_data(msg, clients, TCPsock):
+def get_data(msg, clients):
     commands = [REGISTER, DEREGISTER, PUBLISH, REMOVE, RETRIEVEALL, RETRIEVEINFOT, SEARCHFILE, DOWNLOAD, UPDATECONTACT]
 
     parsed_msg = msg.split(' ')
@@ -34,7 +34,7 @@ def get_data(msg, clients, TCPsock):
         elif parsed_msg[0] == DEREGISTER:
             return_msg = de_register(parsed_msg, clients)
         elif parsed_msg[0] == PUBLISH:
-            return_msg = publish(parsed_msg, clients, TCPsock)
+            return_msg = publish(parsed_msg, clients)
         elif parsed_msg[0] == REMOVE:
             return_msg = remove(parsed_msg, clients)
         elif parsed_msg[0] == RETRIEVEALL:
