@@ -16,8 +16,20 @@ def readTCPMessage(clientSocket):
             return False
 
         return clientMessage
-    except Exception:
+    except Exception as e:
         return False
+
+
+def handleFile(clients, clientData, socketNotified):
+    data = pickle.loads(clientData)
+
+    # data[0]: Client input string
+    # data[1]: files
+    if len(data) > 1:
+        sPublishedMsg = publish(clients, data[0].split(' '), data[1])
+        print(sPublishedMsg)
+        # Send the return message back to the client
+        socketNotified.send(sPublishedMsg.encode())
 
 
 def TCPConnectionThread(TCP_Port, clients):
@@ -30,16 +42,10 @@ def TCPConnectionThread(TCP_Port, clients):
     socketTCP.listen()
 
     # Array containing all the sockets to pay attention to
-    # socketsList = [socketTCP]
-    socketsList = restoreSocketList("socketsListBackup")
-    if not socketsList:
-        socketsList.append(socketTCP)
-    # socketsList = [socketTCP] + restoreData("socketsListBackup")
+    socketsList = [socketTCP]
 
     while True:
         # -------------- Backup Data to File --------------
-        # Need to save the clientSocket so that when server boots up, it knows what to lookout for
-        saveSocketData("socketsListBackup", socketsList)
         saveData("clientsBackup", clients)
         # -------------- End of Backup --------------
 
@@ -50,16 +56,22 @@ def TCPConnectionThread(TCP_Port, clients):
                 # Accept new connection
                 clientSocket, clientAddress = socketNotified.accept()
 
-                # Initial message sent by Client (contains client's name)
-                clientMessage = readTCPMessage(clientSocket).decode()
+                # Initial message sent by Client
+                clientData = readTCPMessage(clientSocket)
 
-                if clientMessage is False:
-                    continue
+                try:
+                    clientData.decode()  # If data is not decodable then data is a file dumped by pickle
+                    if clientData is False:
+                        continue
+                except UnicodeDecodeError as e:
+                    # If this is the error then the data is dumped by pickle and a file was passed
+                    # -------------- Do Publish Here --------------
+                    handleFile(clients, clientData, clientSocket)
+                    # -------------- End of Publish --------------
 
                 # Add socket to the list of connected sockets
                 socketsList.append(clientSocket)
 
-                # Need to save clientSocket in Client array
                 # First message sent from client is the client's name
                 print(f"TCP Connection from {clientAddress}")
             else:
@@ -69,32 +81,17 @@ def TCPConnectionThread(TCP_Port, clients):
                 # Connection closed on client side
                 if clientData is False:
                     socketsList.remove(socketNotified)
-                    # saveData("socketsListBackup", socketsList)
                     continue
 
                 # -------------- Do Publish Here --------------
-                data = pickle.loads(clientData)
-
-                # data[0]: Client input string
-                # data[1]: files
-                sPublishedMsg = publish(clients, data[0].split(' '), data[1])
-
-                print(sPublishedMsg)
-                # Send the return message back to the client
-                socketNotified.send(sPublishedMsg.encode())
+                handleFile(clients, clientData, socketNotified)
                 # -------------- End of Publish --------------
-
-                # Save copy to files:
-                # saveData("clientsBackup", clients)
-                # saveData("socketsListBackup", socketsList)
 
         for socketNotified in errors:
             socketsList.remove(socketNotified)
-            # Save socketsList
-            # saveData("socketsListBackup", socketsList)
 
 
-def startUDP(HOST, PORT, remote_HOST, remote_PORT, TCP_Port):
+def startUDP(HOST, PORT, TCP_Port):
     clients = restoreData("clientsBackup")
 
     # UDP Server - Create UDP Datagram socket
@@ -117,40 +114,22 @@ def startUDP(HOST, PORT, remote_HOST, remote_PORT, TCP_Port):
     # Start TCP thread
     threading.Thread(target=TCPConnectionThread, args=[TCP_Port, clients]).start()
 
-    # if the "other" server is running, then send the client data from that backup server to here
-    # Command sent on server startup will be REQUEST_BACKUP
-    # socketUDP.sendto(str.encode('REQUEST_BACKUP'), (remote_HOST, remote_PORT))
-
     # Infinite Loop for UDP
     # This handles all messages sent using UDP
     while True:
-        clientData = ''
         d = socketUDP.recvfrom(1024)
-        try:
-            clientData = str(d[0].decode())
-            clientAddress = d[1]  # (client address, client port number)
-            if not clientData:
-                break
-        except UnicodeDecodeError:
-            # Will execute this if there is a decode error -> data passed is an array
-            # Copies data from "other" server to this one
-            clients = pickle.loads(d[0])
+        clientData = str(d[0].decode())
+        clientAddress = d[1]  # (client address, client port number)
+        if not clientData:
+            break
 
         if clientData:
-            # if the command is REQUEST_BACKUP then the server will send the clients data to the backup server
-            if clientData.split(' ')[0] == 'REQUEST_BACKUP':
-                # send client data to server
-                clients_data = pickle.dumps(clients)
-                socketUDP.sendto(clients_data, (remote_HOST, remote_PORT))
-            else:
-                msg_to_client = pc.get_data(clientData, clients)
+            msg_to_client = pc.get_data(clientData, clients)
 
-                socketUDP.sendto(str.encode(msg_to_client), clientAddress)
-                print('Message[' + clientAddress[0] + ':' + str(clientAddress[1]) + '] ' + clientData.strip())
+            socketUDP.sendto(str.encode(msg_to_client), clientAddress)
+            print('Message[' + clientAddress[0] + ':' + str(clientAddress[1]) + '] ' + clientData.strip())
 
-                # Save a copy of clients to the backup server
-                # clients_data = pickle.dumps(clients)
-                # socketUDP.sendto(clients_data, (remote_HOST, remote_PORT))
-                saveData("clientsBackup", clients)
+            # Save a copy of clients to the backup file
+            saveData("clientsBackup", clients)
 
     socketUDP.close()

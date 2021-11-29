@@ -7,8 +7,4 @@ if __name__ == '__main__':
 
     TCP_Port = 22222
 
-    # The following is the IP and port of the first server
-    remote_HOST = '0.0.0.0'
-    remote_PORT = 8888
-
-    startUDP(HOST, PORT, remote_HOST, remote_PORT, TCP_Port)
+    startUDP(HOST, PORT, TCP_Port)
