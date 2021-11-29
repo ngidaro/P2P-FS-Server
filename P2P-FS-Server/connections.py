@@ -5,7 +5,15 @@ import pickle
 import sys
 import parse_commands as pc
 from commands.publish import publish
-from commands.backupData import saveData, restoreData, restoreSocketList, saveSocketData
+from commands.backupData import saveData, restoreData
+
+
+# ************************************************************
+# readTCPMessage:
+#   Description: Function which receives TCP data from client
+#   Parameters:
+#       clientSocket: The client's TCP socket
+# ************************************************************
 
 
 def readTCPMessage(clientSocket):
@@ -20,6 +28,16 @@ def readTCPMessage(clientSocket):
         return False
 
 
+# ************************************************************
+# handleFile:
+#   Description: Function which unloads data from client (TCP) and publishes the file to the client's local directory
+#   Parameters:
+#       clients: The array of all clients
+#       clientData: The client's data passed using TCP (non-decoded)
+#       socketNotified: The socket of the client that sent the data to the server
+# ************************************************************
+
+
 def handleFile(clients, clientData, socketNotified):
     data = pickle.loads(clientData)
 
@@ -30,6 +48,16 @@ def handleFile(clients, clientData, socketNotified):
         print(sPublishedMsg)
         # Send the return message back to the client
         socketNotified.send(sPublishedMsg.encode())
+
+
+# ************************************************************
+# TCPConnectionThread:
+#   Description: Thread Function which constantly waits and establishes TCP connection with clients.
+#         Also handles data passed from the client using TCP socket
+#   Parameters:
+#       TCP_Port: The server's current TCP port
+#       clients: The array of all clients
+# ************************************************************
 
 
 def TCPConnectionThread(TCP_Port, clients):
@@ -91,6 +119,16 @@ def TCPConnectionThread(TCP_Port, clients):
             socketsList.remove(socketNotified)
 
 
+# ************************************************************
+# startUDP:
+#   Description: Starts UDP connection and waits for incoming messages from clients
+#   Parameters:
+#       HOST: The server's Host name
+#       PORT: The server's UDP port number
+#       TCP_Port: The server's TCP port number
+# ************************************************************
+
+
 def startUDP(HOST, PORT, TCP_Port):
     clients = restoreData("clientsBackup")
 
@@ -124,7 +162,7 @@ def startUDP(HOST, PORT, TCP_Port):
             break
 
         if clientData:
-            msg_to_client = pc.get_data(clientData, clients)
+            msg_to_client = pc.handleClientMessage(clientData, clients)
 
             socketUDP.sendto(str.encode(msg_to_client), clientAddress)
             print('Message[' + clientAddress[0] + ':' + str(clientAddress[1]) + '] ' + clientData.strip())

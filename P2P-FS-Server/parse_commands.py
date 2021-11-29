@@ -18,8 +18,16 @@ SEARCHFILE = 'SEARCH-FILE'
 DOWNLOAD = 'DOWNLOAD'
 UPDATECONTACT = 'UPDATE-CONTACT'
 
+# ************************************************************
+# handleClientMessage:
+#   Description: Handles the message from the client
+#   Parameters:
+#       msg: The message command sent from the user to the server
+#       clients: The array of clients connected to the server
+# ************************************************************
 
-def get_data(msg, clients):
+
+def handleClientMessage(msg, clients):
     commands = [REGISTER, DEREGISTER, PUBLISH, REMOVE, RETRIEVEALL, RETRIEVEINFOT, SEARCHFILE, DOWNLOAD, UPDATECONTACT]
 
     parsed_msg = msg.split(' ')
