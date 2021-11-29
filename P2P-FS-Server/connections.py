@@ -5,7 +5,7 @@ import pickle
 import sys
 import parse_commands as pc
 from commands.publish import publish
-from commands.backupData import saveData, restoreData
+from commands.backupData import saveData, restoreData, retrieveClientFiles
 
 
 # ************************************************************
@@ -131,6 +131,7 @@ def TCPConnectionThread(TCP_Port, clients):
 
 def startUDP(HOST, PORT, TCP_Port):
     clients = restoreData("clientsBackup")
+    retrieveClientFiles(clients)
 
     # UDP Server - Create UDP Datagram socket
     try:
@@ -162,7 +163,7 @@ def startUDP(HOST, PORT, TCP_Port):
             break
 
         if clientData:
-            msg_to_client = pc.handleClientMessage(clientData, clients)
+            msg_to_client = pc.handleClientMessage(clientData, clients, None)
 
             socketUDP.sendto(str.encode(msg_to_client), clientAddress)
             print('Message[' + clientAddress[0] + ':' + str(clientAddress[1]) + '] ' + clientData.strip())

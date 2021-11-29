@@ -50,3 +50,6 @@ class Client:
 
         # File does not exist for this user
         return 0
+
+    def retrieveFiles(self, files):
+        self.files = files

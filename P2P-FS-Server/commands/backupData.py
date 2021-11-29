@@ -1,6 +1,6 @@
 from pathlib import Path
 import pickle
-
+from os import walk
 
 # ************************************************************
 # restoreData:
@@ -33,3 +33,12 @@ def restoreData(filename):
 
 def saveData(filename, dataArray):
     pickle.dump(dataArray, open(f"backup/{filename}", "wb"))
+
+
+def retrieveClientFiles(clients):
+    # f = open('public/' + parsed_msg[2] + '/' + file, "a")
+    for client in clients:
+        directory = f"public/{client.name}"
+        if Path(directory).exists():
+            filenames = next(walk(directory), (None, None, []))[2]
+            client.retrieveFiles(filenames)

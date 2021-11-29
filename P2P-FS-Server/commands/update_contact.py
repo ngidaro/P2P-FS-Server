@@ -1,6 +1,3 @@
-from Client import Client
-
-
 def update_contact(parsed_msg, clients):
     if len(parsed_msg) == 6:
         rq = parsed_msg[1]
