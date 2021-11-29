@@ -27,7 +27,7 @@ def publish(parsed_msg, clients, connection):
         #connection, client_address = sock.accept()
         unpickdata = connection.recv(1024)
         data = pickle.loads(unpickdata)
-
+        print(data)
         for file in publishedfiles:
 
             # Check if client's folder exists, if it doesn't then make one

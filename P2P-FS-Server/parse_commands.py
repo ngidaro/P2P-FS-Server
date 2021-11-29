@@ -44,7 +44,7 @@ def get_data(msg, clients, TCPsock):
         elif parsed_msg[0] == SEARCHFILE:
             return_msg = search_file(parsed_msg, clients)
         elif parsed_msg[0] == DOWNLOAD:
-            return_msg = download(parsed_msg)
+            return_msg = download(parsed_msg, TCPsock)
         elif parsed_msg[0] == UPDATECONTACT:
             return_msg = update_contact(parsed_msg, clients)
         else:
