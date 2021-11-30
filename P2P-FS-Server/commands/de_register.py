@@ -13,6 +13,8 @@ def de_register(parsed_msg, clients):
                 # Check if folder exists
                 if Path('public/' + name).exists():
                     shutil.rmtree('public/' + name)
+                # Remove client files
+                client.deleteAllFiles()
                 # Remove this client from the list
                 clients.pop(index)
                 return 'DE-REGISTERED ' + rq + ' ' + name

@@ -53,3 +53,6 @@ class Client:
 
     def retrieveFiles(self, files):
         self.files = files
+
+    def deleteAllFiles(self):
+        del self.files[:]
