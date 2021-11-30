@@ -14,10 +14,10 @@ class Client:
         self.port_UDP = port_UDP
         self.port_TCP = port_TCP
 
-    def update_client(self, address, port_UDP, port_TCP):
+    def update_client(self, address, port_UDP):
         self.address = address
         self.port_UDP = port_UDP
-        self.port_TCP = port_TCP
+        # self.port_TCP = port_TCP
 
     # Displays all data for this client
     def display_data(self):

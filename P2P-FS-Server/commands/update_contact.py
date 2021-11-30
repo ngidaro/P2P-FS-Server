@@ -1,15 +1,15 @@
 def update_contact(parsed_msg, clients):
-    if len(parsed_msg) == 6:
+    if len(parsed_msg) == 5:
         rq = parsed_msg[1]
         name = parsed_msg[2]
         IP_address = parsed_msg[3]
         port_UDP = parsed_msg[4]
-        port_TCP = parsed_msg[5]
+        # port_TCP = parsed_msg[5]
 
         for client in clients:
             if name == client.name:
-                client.update_client(IP_address, port_UDP, port_TCP)
-                return 'UPDATE-CONFIRMED ' + rq + ' ' + name + ' ' + IP_address + ' ' + port_UDP + ' ' + port_TCP
+                client.update_client(IP_address, port_UDP)
+                return 'UPDATE-CONFIRMED ' + rq + ' ' + name + ' ' + IP_address + ' ' + port_UDP
 
         return 'UPDATE-DENIED ' + parsed_msg[1] + ' ' + parsed_msg[2] + ' ' + 'Name does not exist'
     else:
