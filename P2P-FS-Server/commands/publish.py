@@ -36,7 +36,7 @@ def publish(clients, parsed_msg, data):
 
             count = 0
             for element in data:
-                if element == "01111110":
+                if element == "13984756971395719y7f8eryf7842378y9784532789":
                     if count == 0:
                         pass
                         count += 1
