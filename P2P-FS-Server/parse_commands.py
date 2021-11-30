@@ -1,26 +1,30 @@
 from commands.register import register
 from commands.de_register import de_register
-from commands.publish import publish
 from commands.remove import remove
 from commands.retrieve_all import retrieve_all
 from commands.retrieve_infot import retrieve_infot
 from commands.search_file import search_file
-from commands.download import download
 from commands.update_contact import update_contact
 
 REGISTER = 'REGISTER'
 DEREGISTER = 'DE-REGISTER'
-PUBLISH = 'PUBLISH'
 REMOVE = 'REMOVE'
 RETRIEVEALL = 'RETRIEVE-ALL'
 RETRIEVEINFOT = 'RETRIEVE-INFOT'
 SEARCHFILE = 'SEARCH-FILE'
-DOWNLOAD = 'DOWNLOAD'
 UPDATECONTACT = 'UPDATE-CONTACT'
 
+# ************************************************************
+# handleClientMessage:
+#   Description: Handles the message from the client
+#   Parameters:
+#       msg: The message command sent from the user to the server
+#       clients: The array of clients connected to the server
+# ************************************************************
 
-def get_data(msg, clients, TCPsock):
-    commands = [REGISTER, DEREGISTER, PUBLISH, REMOVE, RETRIEVEALL, RETRIEVEINFOT, SEARCHFILE, DOWNLOAD, UPDATECONTACT]
+
+def handleClientMessage(msg, clients):
+    commands = [REGISTER, DEREGISTER, REMOVE, RETRIEVEALL, RETRIEVEINFOT, SEARCHFILE, UPDATECONTACT]
 
     parsed_msg = msg.split(' ')
 
@@ -33,8 +37,6 @@ def get_data(msg, clients, TCPsock):
             return_msg = register(parsed_msg, clients)
         elif parsed_msg[0] == DEREGISTER:
             return_msg = de_register(parsed_msg, clients)
-        elif parsed_msg[0] == PUBLISH:
-            return_msg = publish(parsed_msg, clients, TCPsock)
         elif parsed_msg[0] == REMOVE:
             return_msg = remove(parsed_msg, clients)
         elif parsed_msg[0] == RETRIEVEALL:
@@ -43,8 +45,6 @@ def get_data(msg, clients, TCPsock):
             return_msg = retrieve_infot(parsed_msg, clients)
         elif parsed_msg[0] == SEARCHFILE:
             return_msg = search_file(parsed_msg, clients)
-        elif parsed_msg[0] == DOWNLOAD:
-            return_msg = download(parsed_msg, TCPsock)
         elif parsed_msg[0] == UPDATECONTACT:
             return_msg = update_contact(parsed_msg, clients)
         else:
