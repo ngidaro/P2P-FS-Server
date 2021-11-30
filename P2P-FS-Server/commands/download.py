@@ -11,7 +11,7 @@ def download(parsed_msg, connection):
         connection.sendall(serializedDownloadFile)
         return 'FILE SENT SUCCESSFULLY:' + parsed_msg[1]  # Add filename, chunk text
     else:
-        return 'DOWNLOAD-ERROR: ' + parsed_msg[1] + ' FILE NOT FOUND'
+        return f"DOWNLOAD-ERROR {parsed_msg[1]} FILE NOT FOUND"
 
 
 def serializeFiles(filename):
