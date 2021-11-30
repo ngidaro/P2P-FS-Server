@@ -5,6 +5,7 @@ import pickle
 import sys
 import parse_commands as pc
 from commands.publish import publish
+from commands.download import download
 from commands.backupData import saveData, restoreData, retrieveClientFiles
 
 
@@ -43,11 +44,17 @@ def handleFile(clients, clientData, socketNotified):
 
     # data[0]: Client input string
     # data[1]: files
-    if len(data) > 1:
+    if len(data) > 1 and 'PUBLISH' in data[0]:
         sPublishedMsg = publish(clients, data[0].split(' '), data[1])
         print(sPublishedMsg)
         # Send the return message back to the client
         socketNotified.send(sPublishedMsg.encode())
+
+    elif len(data) > 0 and 'DOWNLOAD' in data[0]:
+        sPublishedMsg = download(data[0].split(' '), socketNotified)
+        socketNotified.send(sPublishedMsg.encode())
+    else:
+        socketNotified.send("Invalid Command".encode())
 
 
 # ************************************************************
@@ -93,9 +100,9 @@ def TCPConnectionThread(TCP_Port, clients):
                         continue
                 except UnicodeDecodeError as e:
                     # If this is the error then the data is dumped by pickle and a file was passed
-                    # -------------- Do Publish Here --------------
+                    # -------------- Do Publish or Download --------------
                     handleFile(clients, clientData, clientSocket)
-                    # -------------- End of Publish --------------
+                    # -------------- End of Publish or Download --------------
 
                 # Add socket to the list of connected sockets
                 socketsList.append(clientSocket)
@@ -103,7 +110,7 @@ def TCPConnectionThread(TCP_Port, clients):
                 # First message sent from client is the client's name
                 print(f"TCP Connection from {clientAddress}")
             else:
-                # This is where the PUBLISH happens
+                # This is where the PUBLISH or DOWNLOAD happens
                 clientData = readTCPMessage(socketNotified)
 
                 # Connection closed on client side
@@ -111,9 +118,9 @@ def TCPConnectionThread(TCP_Port, clients):
                     socketsList.remove(socketNotified)
                     continue
 
-                # -------------- Do Publish Here --------------
+                # -------------- Do Publish or Download --------------
                 handleFile(clients, clientData, socketNotified)
-                # -------------- End of Publish --------------
+                # -------------- End of Publish or Download --------------
 
         for socketNotified in errors:
             socketsList.remove(socketNotified)
@@ -163,10 +170,10 @@ def startUDP(HOST, PORT, TCP_Port):
             break
 
         if clientData:
-            msg_to_client = pc.handleClientMessage(clientData, clients, None)
+            msg_to_client = pc.handleClientMessage(clientData, clients)
 
             socketUDP.sendto(str.encode(msg_to_client), clientAddress)
-            print('Message[' + clientAddress[0] + ':' + str(clientAddress[1]) + '] ' + clientData.strip())
+            print(f"Message[{clientAddress[0]} : {str(clientAddress[1])}] {clientData.strip()}")
 
             # Save a copy of clients to the backup file
             saveData("clientsBackup", clients)

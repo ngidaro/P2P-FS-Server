@@ -23,11 +23,6 @@ def publish(clients, parsed_msg, data):
         if clientIndex == -1:
             return 'PUBLISHED-DENIED ' + parsed_msg[1] + ' User does not exist'
 
-        # connection, client_address = sock.accept()
-        # unpickdata = connection.recv(1024)
-        # data = pickle.loads(unpickdata)
-        # for file in publishedfiles:
-
         for file in filenames:
             # Check if client's folder exists, if it doesn't then make one
             clientFolder = Path("public/" + parsed_msg[2])
