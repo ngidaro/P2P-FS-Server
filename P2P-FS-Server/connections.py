@@ -8,6 +8,9 @@ from commands.publish import publish
 from commands.download import download
 from commands.backupData import saveData, restoreData, retrieveClientFiles
 
+TCP_LOCK = threading.Lock()
+UDP_LOCK = threading.Lock()
+
 
 # ************************************************************
 # readTCPMessage:
@@ -44,17 +47,18 @@ def handleFile(clients, clientData, socketNotified):
 
     # data[0]: Client input string
     # data[1]: files
-    if len(data) > 1 and 'PUBLISH' in data[0]:
-        sPublishedMsg = publish(clients, data[0].split(' '), data[1])
-        print(sPublishedMsg)
-        # Send the return message back to the client
-        socketNotified.send(sPublishedMsg.encode())
+    with TCP_LOCK:
+        if len(data) > 1 and 'PUBLISH' in data[0]:
+            sPublishedMsg = publish(clients, data[0].split(' '), data[1])
+            print(sPublishedMsg)
+            # Send the return message back to the client
+            socketNotified.send(sPublishedMsg.encode())
 
-    elif len(data) > 0 and 'DOWNLOAD' in data[0]:
-        sPublishedMsg = download(data[0].split(' '), socketNotified)
-        socketNotified.send(sPublishedMsg.encode())
-    else:
-        socketNotified.send("Invalid Command".encode())
+        elif len(data) > 0 and 'DOWNLOAD' in data[0]:
+            sPublishedMsg = download(data[0].split(' '), socketNotified)
+            socketNotified.send(sPublishedMsg.encode())
+        else:
+            socketNotified.send("Invalid Command".encode())
 
 
 # ************************************************************
@@ -74,7 +78,7 @@ def TCPConnectionThread(TCP_Port, clients):
     socketTCP.bind(('', TCP_Port))
     print('TCP Socket Bind Complete')
 
-    socketTCP.listen()
+    socketTCP.listen(5)  # Size of queue is 5
 
     # Array containing all the sockets to pay attention to
     socketsList = [socketTCP]
@@ -170,12 +174,13 @@ def startUDP(HOST, PORT, TCP_Port):
             break
 
         if clientData:
-            msg_to_client = pc.handleClientMessage(clientData, clients)
+            with UDP_LOCK:
+                msg_to_client = pc.handleClientMessage(clientData, clients)
 
-            socketUDP.sendto(str.encode(msg_to_client), clientAddress)
-            print(f"Message[{clientAddress[0]} : {str(clientAddress[1])}] {clientData.strip()}")
+                socketUDP.sendto(str.encode(msg_to_client), clientAddress)
+                print(f"Message[{clientAddress[0]} : {str(clientAddress[1])}] {clientData.strip()}")
 
-            # Save a copy of clients to the backup file
-            saveData("clientsBackup", clients)
+                # Save a copy of clients to the backup file
+                saveData("clientsBackup", clients)
 
     socketUDP.close()
