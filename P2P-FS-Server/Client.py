@@ -13,6 +13,7 @@ class Client:
         self.address = address
         self.port_UDP = port_UDP
         self.port_TCP = port_TCP
+        self.files = []
 
     def update_client(self, address, port_UDP):
         self.address = address
@@ -53,6 +54,3 @@ class Client:
 
     def retrieveFiles(self, files):
         self.files = files
-
-    def deleteAllFiles(self):
-        del self.files[:]
